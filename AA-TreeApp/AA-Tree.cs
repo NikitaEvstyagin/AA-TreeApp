@@ -28,14 +28,46 @@ namespace AA_TreeApp
     public class AATree<T> where T : IComparable<T>
     {
         private AANode<T> _root;
+        public int iteration = 0;
+
+        public AATree()
+        {
+            _root = null;
+        }
+
+        public AATree(T value)
+        {
+            _root = new AANode<T>(value);
+        }
+
+        public AATree(T[] values)
+        {
+            for (int i = 0; i < values.Length; i++)
+            {
+                this.Add(values[i]);
+            }
+        }
+
+        public AATree(List<T> values)
+        {
+            T[] arr = values.ToArray();
+            for (int i = 0; i < arr.Length; i++)
+            {
+                this.Add(values[i]);
+            }
+        }
+
 
         public void Add(T value)
         {
+            iteration = 0;
             _root = Add(value, _root);
         }
 
+
         private AANode<T> Add(T value, AANode<T> node)
         {
+
             if (node == null)
             {
                 return new AANode<T>(value);
@@ -43,14 +75,17 @@ namespace AA_TreeApp
 
             if (value.CompareTo(node.Value) < 0)
             {
+                iteration++;
                 node.Left = Add(value, node.Left);
             }
             else if (value.CompareTo(node.Value) > 0)
             {
+                iteration++;
                 node.Right = Add(value, node.Right);
             }
             else
             {
+                iteration++;
                 return node;
             }
 
@@ -99,6 +134,7 @@ namespace AA_TreeApp
 
         public void Remove(T value)
         {
+            iteration = 0;
             _root = Remove(value, _root);
         }
 
@@ -108,23 +144,26 @@ namespace AA_TreeApp
             {
                 return node;
             }
-
             if (value.CompareTo(node.Value) < 0)
             {
+                iteration++;
                 node.Left = Remove(value, node.Left);
             }
             else if (value.CompareTo(node.Value) > 0)
             {
+                iteration++;
                 node.Right = Remove(value, node.Right);
             }
             else
             {
                 if (node.Left == null)
                 {
+                    iteration++;
                     return node.Right;
                 }
                 else if (node.Right == null)
                 {
+                    iteration++;
                     return node.Left;
                 }
                 else
@@ -193,11 +232,40 @@ namespace AA_TreeApp
                 return Contains(value, node.Right);
             }
         }
-        public void PrintTree() {
+
+        public AANode<T> Search(T value, AANode<T> node)
+        {
+            if (node == null || value.CompareTo(node.Value) == 0)
+            {
+                iteration++;
+                return node;
+            }
+
+            if (value.CompareTo(node.Value) < 0)
+            {
+                iteration++;
+                return Search(value, node.Left);
+            }
+            else
+            {
+                iteration++;
+                return Search(value, node.Right);
+            }
+        }
+
+        public AANode<T> Search(T Value)
+        {
+            iteration = 0;
+            return this.Search(Value, _root);
+        }
+
+        public void PrintTree()
+        {
             PrintTree(_root);
         }
 
-        public void PrintTree(AANode<T> node) {
+        public void PrintTree(AANode<T> node)
+        {
             if (node == null) return;
             PrintTree(node.Left);
             Console.WriteLine(node.Value);
